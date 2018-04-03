@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - InfluenceSphere
+  - InfluenceField
   layers:
   - Default
   - TransparentFX
