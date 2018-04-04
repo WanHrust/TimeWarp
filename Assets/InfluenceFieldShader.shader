@@ -6,7 +6,8 @@
 		_AlbedoColor("Color", Color) = (1.0, 0.0, 0.0, 1.0)
 		_ImpactColor("Impact Color", Color) = (0.0, 1.0, 0.0, 1.0)
 
-		_Scale("Scale", float) = 1.0
+		_ScaleColor("ScaleColor", float) = 1.0
+	    _ScaleWave("ScaleWave", float) = 1.0
 		_Speed("Speed", float) = 1.0
 		_Frequency("Frequency", float) = 1.0
 	}
@@ -32,6 +33,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float3 normal : NORMAL;
 				float2 uv : TEXCOORD0;
 			};
 
@@ -47,7 +49,8 @@
 			float4 _MainTex_ST;
 			float4 _ImpactColor;
 			float _AlbedoColor;
-			float _Scale;
+			float _ScaleColor;
+			float _ScaleWave;
 			float _Speed;
 			float _Frequency;
 			
@@ -55,7 +58,12 @@
 			{
 				v2f o;
 				o.position = mul(unity_ObjectToWorld, v.vertex);
+				float dist = distance(o.position, _ImpactPosition);
+				if(dist < 2) {
+					v.vertex = v.vertex +  _ScaleWave * float4(v.normal, 1) * sin(_Time.w * _Speed + 1 / dist * _Frequency) / dist;;
+				}
 				o.vertex = UnityObjectToClipPos(v.vertex);
+
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
 			}
@@ -64,7 +72,7 @@
 			{
 				float dist = distance(i.position, _ImpactPosition);
 				if (dist < 2) {
-					float value = _Scale * sin(_Time.w * _Speed + 1/dist * _Frequency) / dist;
+					float value = _ScaleColor * sin(_Time.w * _Speed + 1/dist * _Frequency) / dist;
 					return (_ImpactColor * value);
 				}
 				else 
